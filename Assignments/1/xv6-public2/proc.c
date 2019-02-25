@@ -8,9 +8,6 @@
 #include "spinlock.h"
 
 
-
-
-
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -605,12 +602,14 @@ send(int send_id,int recv_id,char* rmessage)
   for(int i=0;i<MSGSIZE;i++){
     p2->message.MessageQueue[(p2->message.tail)%1000][i]=msg[i];
   }
+
+  // cprintf("Sent from %d\n", send_id);
   p2->message.tail=p2->message.tail+1;
   // cprintf("sendo1 %s\n",p2->message.MessageQueue[(p2->message.head)%1000]);
   // cprintf("rid %d",p2->pid);
   if(p2->message.waiting==1){
     p2->message.waiting=0;
-    wakeup(p2);
+    wakeup1(p2);
   }
   // release(&(p->message->lock));
   release(&ptable.lock);
@@ -630,7 +629,10 @@ recv(char* mess_buf)
     p->message.waiting=1;
     
     sleep(p,&ptable.lock);
-
+    for(int i=0;i<MSGSIZE;i++){
+      mess_buf[i]=p->message.MessageQueue[(p->message.head)%1000][i];
+    }
+    p->message.head+=1;
 
   }
   else{
@@ -639,8 +641,6 @@ recv(char* mess_buf)
     for(int i=0;i<MSGSIZE;i++){
       mess_buf[i]=p->message.MessageQueue[(p->message.head)%1000][i];
     }
-
-
     p->message.head+=1;
     // cprintf("checkthis %s\n",mess_buf);
     // cprintf("mess_bu addrs %d",mess_buf);

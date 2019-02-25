@@ -104,3 +104,34 @@ memmove(void *vdst, const void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+
+// Added by Ansh Prakash
+void itoa(int n,char* buf) {
+    // char* ret = NULL;
+    int numChars = 0;
+    // Determine if integer is negative
+    int isNegative = 0;
+    if (n < 0) {
+        n = -n;
+        isNegative =1;
+        numChars++;
+    }
+    // Count how much space we will need for the string
+    int temp = n;
+    do {
+        numChars++;
+        temp /= 10;
+    } while ( temp );
+    //Allocate space for the string (1 for negative sign, 1 for each digit, and 1 for null terminator)
+    // char buf[numChars + 1];
+    // ret = new char[ numChars + 1 ];
+    buf[numChars] = 0;
+    //Add the negative sign if needed
+    if (isNegative) buf[0] = '-';
+    // Copy digits to string in reverse order
+    int i = numChars - 1;
+    do {
+        buf[i--] = n%10 + '0';
+        n /= 10;
+    } while (n);
+}

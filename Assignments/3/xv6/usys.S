@@ -34,6 +34,6 @@ SYSCALL(destroy_container)
 SYSCALL(join_container)
 SYSCALL(leave_container)
 SYSCALL(ps)
-SYSCALL(newls)
+
 
 

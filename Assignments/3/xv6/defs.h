@@ -127,9 +127,8 @@ uint            leave_container(void);
 struct proc*    getproc(int);
 void            container_scheduler(void);
 void            ps(void);
-void            newls(void);
-char*           tempfmtname(char *path);
-void            templs(char *path);
+
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);

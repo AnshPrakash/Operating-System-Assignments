@@ -698,167 +698,47 @@ ps()
 
 
 
-void
-itoa(int num , char* ret)
-{
-  int rem, len = 0;
-  int n = num;
-  while(n!=0){
-    len++;
-    n = n/10;
-  }
-  for(int i=0;i<len;i++){
-    rem = num%10;
-    num = num/10;
-    ret[len - (i+1)] =rem +'0';
-  }
-  ret[len] = '\0';
-}
-
-// #include "fs.h"
-// #include "stat.h"
-// #include "fcntl.h"
-// #include "file.h"
-
-// int 
-// helperopen(char* path,int omode)
+// void
+// itoa(int num , char* ret)
 // {
-//   // char *path;
-//   int fd;
-//   struct file *f;
-//   struct inode *ip;
-
-//   begin_op();
-
-//   if(omode & O_CREATE){
-//     ip = create(path, T_FILE, 0, 0);
-//     if(ip == 0){
-//       end_op();
-//       return -1;
-//     }
-//   } else {
-//     if((ip = namei(path)) == 0){
-//       end_op();
-//       return -1;
-//     }
-//     ilock(ip);
-//     if(ip->type == T_DIR && omode != O_RDONLY){
-//       iunlockput(ip);
-//       end_op();
-//       return -1;
-//     }
+//   int rem, len = 0;
+//   int n = num;
+//   while(n!=0){
+//     len++;
+//     n = n/10;
 //   }
-
-//   if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-//     if(f)
-//       fileclose(f);
-//     iunlockput(ip);
-//     end_op();
-//     return -1;
+//   for(int i=0;i<len;i++){
+//     rem = num%10;
+//     num = num/10;
+//     ret[len - (i+1)] =rem +'0';
 //   }
-//   iunlock(ip);
-//   end_op();
-
-//   f->type = FD_INODE;
-//   f->ip = ip;
-//   f->off = 0;
-//   f->readable = !(omode & O_WRONLY);
-//   f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-//   return fd;
+//   ret[len] = '\0';
 // }
 
 
-// char*
-// tempfmtname(char *path)
-// {
-//   static char buf[DIRSIZ+1];
-//   char *p;
-
-//   // Find first character after last slash.
-//   for(p=path+strlen(path); p >= path && *p != '/'; p--)
-//     ;
-//   p++;
-
-//   // Return blank-padded name.
-//   if(strlen(p) >= DIRSIZ)
-//     return p;
-//   memmove(buf, p, strlen(p));
-//   memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
-//   return buf;
-// }
 
 // void
-// templs(char *path)
+// newls()
 // {
-//   char buf[512], *p;
-//   int fd;
-//   struct dirent de;
-//   struct stat st;
-
-//   if((fd = helperopen(path, 0)) < 0){
-//     cprintf("ls: cannot open %s\n", path);
-//     return;
+//   struct proc *mp = myproc();
+//   int mycid = mp->cid;
+//   char path[4];
+//   char num[4]; 
+//   itoa(mycid,num);
+//   if(mycid == -1){
+//     path[0] = '.';
+//     path[1] = '\0';
 //   }
-
-//   if(fstat(fd, &st) < 0){
-//     cprintf("ls: cannot stat %s\n", path);
-//     close(fd);
-//     return;
-//   }
-
-//   switch(st.type){
-//   case T_FILE:
-//     cprintf("%s %d %d %d\n", tempfmtname(path), st.type, st.ino, st.size);
-//     break;
-
-//   case T_DIR:
-//     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof buf){
-//       cprintf("ls: path too long\n");
-//       break;
+//   else{
+//     path[0] = 'c';
+//     int i=0;
+//     while(num[i]!='\0'){
+//       path[i+1] = num[i];
+//       i++;
 //     }
-//     strcpy(buf, path);
-//     p = buf+strlen(buf);
-//     *p++ = '/';
-//     while(read(fd, &de, sizeof(de)) == sizeof(de)){
-//       if(de.inum == 0)
-//         continue;
-//       memmove(p, de.name, DIRSIZ);
-//       p[DIRSIZ] = 0;
-//       if(stat(buf, &st) < 0){
-//         cprintf("ls: cannot stat %s\n", buf);
-//         continue;
-//       }
-//       cprintf("%s %d %d %d\n", tempfmtname(buf), st.type, st.ino, st.size);
-//     }
-//     break;
+//     path[i+1] = '\0';
 //   }
-//   close(fd);
+//   cprintf("path :%s\n",path);
+
 // }
-
-
-
-void
-newls()
-{
-  struct proc *mp = myproc();
-  int mycid = mp->cid;
-  char path[4];
-  char num[4]; 
-  itoa(mycid,num);
-  if(mycid == -1){
-    path[0] = '.';
-    path[1] = '\0';
-  }
-  else{
-    path[0] = 'c';
-    int i=0;
-    while(num[i]!='\0'){
-      path[i+1] = num[i];
-      i++;
-    }
-    path[i+1] = '\0';
-  }
-  cprintf("path :%s\n",path);
-
-}
 

@@ -137,9 +137,9 @@ sys_ps(void)
 }
 
 
-int
-sys_newls(void)
-{
-  newls();
-  return(0);
-}
+// int
+// sys_newls(void)
+// {
+//   newls();
+//   return(0);
+// }

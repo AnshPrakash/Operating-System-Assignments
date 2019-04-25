@@ -238,7 +238,7 @@ open_file(char* filename,int mode)
       int j = 2;
       while(conv[j-2]!='\0'){
         path_t[j] = conv[j-2];
-        printf(0,"%s\n", conv);
+        // printf(0,"%s\n", conv);
         j++;
       }
       path_t[j] = '/';
@@ -266,7 +266,6 @@ open_file(char* filename,int mode)
           printf(1," no such file exist\n");
         }
         close(fd);
-        printf(0,"file apth_t %s\n",path_t);
         copyfile(path,path_t);
 
         fd = open(filename,O_RDWR);
@@ -339,6 +338,7 @@ int main(void)
   }
   ////////FILE ISOLATION ENDS//////
 
+
   /////////////COPY ON WRITE TESTING //////
   create_file("ROOT");
   int fdt;
@@ -348,7 +348,7 @@ int main(void)
   write(fdt,raw,n);
   close(fdt);
 
-  int pid = fork();
+  pid = fork();
   if(pid == 0){
     join_container_wrapper(2); // called only by child created by preceeding fork call .
     int fd;

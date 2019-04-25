@@ -27,5 +27,7 @@
 #define SYS_ps 26
 #define SYS_newls 27
 #define SYS_getcid 28
+#define SYS_schedulerLogOn 29
+#define SYS_schedulerLogOff 30
 
 

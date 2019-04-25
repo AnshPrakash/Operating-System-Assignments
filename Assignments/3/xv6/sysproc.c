@@ -144,7 +144,20 @@ sys_getcid(void)
   return(cid);
 }
 
+int
+sys_schedulerLogOn()
+{
+  schedulerLogOn();
+  return(0);
+}
 
+
+int
+sys_schedulerLogOff()
+{
+  schedulerLogOff();
+  return(0);
+}
 
 // int
 // sys_newls(void)

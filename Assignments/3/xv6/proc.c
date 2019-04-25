@@ -7,6 +7,9 @@
 #include "proc.h"
 #include "spinlock.h"
 
+int sched_log = 0 ;
+
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -404,6 +407,9 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      // if (sched_log == 1){
+      //   cprintf("Container : %d :Scheduling Process %d\n",p->cid,p->pid);
+      // }
       if(p->state != RUNNABLE )
         continue;
 
@@ -704,6 +710,18 @@ getcid(){
   return(mycid);
 }
 
+
+void
+schedulerLogOn()
+{
+  sched_log = 1;
+}
+
+void
+schedulerLogOff()
+{
+  sched_log = 0;
+}
 
 // void
 // itoa(int num , char* ret)

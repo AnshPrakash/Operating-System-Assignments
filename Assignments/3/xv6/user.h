@@ -31,6 +31,8 @@ void ps(void);
 void newls(void);
 void itoa(int,char*);
 int getcid();
+void schedulerLogOn();
+void schedulerLogOff();
 
 
 //create_container.c

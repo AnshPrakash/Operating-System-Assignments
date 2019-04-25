@@ -35,6 +35,9 @@ SYSCALL(join_container)
 SYSCALL(leave_container)
 SYSCALL(ps)
 SYSCALL(getcid)
+SYSCALL(schedulerLogOn)
+SYSCALL(schedulerLogOff)
+
 
 
 

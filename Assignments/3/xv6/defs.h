@@ -128,7 +128,8 @@ struct proc*    getproc(int);
 void            container_scheduler(void);
 void            ps(void);
 int             getcid(void);
-
+void            schedulerLogOn();
+void            schedulerLogOff();
 
 
 // swtch.S

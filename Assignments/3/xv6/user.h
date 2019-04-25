@@ -30,6 +30,7 @@ uint leave_container(void);
 void ps(void);
 void newls(void);
 void itoa(int,char*);
+int getcid();
 
 
 //create_container.c

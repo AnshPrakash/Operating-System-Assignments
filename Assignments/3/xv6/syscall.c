@@ -108,6 +108,7 @@ extern int sys_destroy_container(void);
 extern int sys_join_container(void);
 extern int sys_leave_container(void);
 extern int sys_ps(void);
+extern int sys_getcid(void);
 // extern int sys_newls(void);
 
 static int (*syscalls[])(void) = {
@@ -137,6 +138,7 @@ static int (*syscalls[])(void) = {
 [SYS_join_container] sys_join_container,
 [SYS_leave_container] sys_leave_container,
 [SYS_ps]      sys_ps,
+[SYS_getcid]  sys_getcid,
 // [SYS_newls]   sys_newls,
 };
 

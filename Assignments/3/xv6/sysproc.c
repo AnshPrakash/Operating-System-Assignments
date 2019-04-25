@@ -137,6 +137,15 @@ sys_ps(void)
 }
 
 
+int
+sys_getcid(void)
+{
+  int cid = getcid();
+  return(cid);
+}
+
+
+
 // int
 // sys_newls(void)
 // {

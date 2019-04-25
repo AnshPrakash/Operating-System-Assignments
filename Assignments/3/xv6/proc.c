@@ -697,6 +697,13 @@ ps()
 }
 
 
+int
+getcid(){
+  struct proc *mp = myproc();
+  int mycid = mp->cid;
+  return(mycid);
+}
+
 
 // void
 // itoa(int num , char* ret)

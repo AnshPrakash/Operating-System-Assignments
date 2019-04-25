@@ -179,6 +179,25 @@ create_file(char* filename)
 }
 
 
+void 
+copyfile(char* file1,char* file2)
+{ 
+  int fd0,fd1,n;
+  char buf[512];
+  if((fd0 = open(file1,O_RDONLY))<0){
+    printf(1," error while copying \n");
+  }
+  create_file(file2);
+  if((fd1 = open(file1,O_RDWR))<0){
+    printf(1," error while copying \n");
+  }
+  while((n = read(fd0,buf,sizeof(buf))) >0 ){
+    write(fd1,buf,n);
+  }
+  close(fd0);
+  close(fd1);
+}
+
 /*
  *   mode : rdonly 0
  *        : wronly 1
@@ -199,9 +218,81 @@ open_file(char* filename,int mode)
   }
 
   if(fd<0){
-      printf(1," not able to create the file\n");
+      char path[30];
+      path[0] = '/';
+      int i = 0;
+      while(filename[i]!='\0'){
+        path[i+1] = filename[i];
+        i++;
+      }
+      if((fd = open(path,O_RDWR))<0){
+        printf(1," no such file exist\n");
+        return(-1);
+      }
+      int cid = getcid();
+      char path_t[40];
+      path_t[0] = '/';
+      path_t[1] ='c';
+      char  conv[3];
+      itoa(cid,conv);
+      int j = 2;
+      while(conv[j-2]!='\0'){
+        path_t[j] = conv[j-2];
+        printf(0,"%s\n", conv);
+        j++;
+      }
+      path_t[j] = '/';
+      j++;
+      i = 0;
+      while(filename[i]!='\0'){
+        path_t[i+j] = filename[i];
+        i++;
+      }
+      path_t[i+j] = '\0';
+      if(mode == 0 ){
+        fd = open(path,O_RDONLY);
+      }
+      else if(mode == 1){
+        if((fd = open(path,O_WRONLY))<0){
+          printf(1," no such file exist\n");
+        }
+        close(fd);
+        copyfile(path,path_t);
+        fd = open(filename,O_WRONLY);
+        return(fd);
+      }
+      else if(mode == 2){
+        if((fd = open(path,O_RDWR))<0){
+          printf(1," no such file exist\n");
+        }
+        close(fd);
+        printf(0,"file apth_t %s\n",path_t);
+        copyfile(path,path_t);
+
+        fd = open(filename,O_RDWR);
+        return(fd);
+      }
+      if(fd<0){
+        printf(1," no such file exist\n");
+      }
   }
   return(fd);
+}
+
+
+void
+cont_cat(char* file)
+{
+  int fd,n;
+  char buf[512];
+  if((fd = open_file(file,0))<0){
+    printf(1," error while copying \n");
+  }
+
+  while((n = read(fd,buf,sizeof(buf))) >0 ){
+    printf(0,"%s",buf);
+  }
+  close(fd);
 }
 
 int main(void)
@@ -210,9 +301,7 @@ int main(void)
   init_containers_resources();
 	create_container(1);
   create_container(2);
-  
-
-
+  create_container(3);
   //////////////FILE ISOLATION///////////////////////
   int pid = fork();
   if(pid == 0){
@@ -230,40 +319,51 @@ int main(void)
     // ps();
     exit();
   }
-  // wait();
-	destroy_container_wrapper(1);
-  // pid = fork();
-  // if(pid == 0){
-  //   join_container_wrapper(2); // called only by child created by preceeding fork call .
-  //   create_file("YOYO");
-  //   int fd;
-  //   fd =open_file("YOYO",2);
-  //   char raw[5] = "five\n";
-  //   int n =5;
-  //   write(fd,raw,n);
-  //   close(fd);
-  //   printf(0,"Testing ls \n\n\n");
-  //   cont_ls();
-  //   printf(0,"Testing ps \n\n\n");
-  //   ps();
-  //   exit();
-  // }
-  /////////////////////////////
+  // destroy_container_wrapper(1);
+  
+  pid = fork();
+  if(pid == 0){
+    join_container_wrapper(2); // called only by child created by preceeding fork call .
+    create_file("YOYO");
+    int fd;
+    fd =open_file("YOYO",2);
+    char raw[5] = "five\n";
+    int n =5;
+    write(fd,raw,n);
+    close(fd);
+    printf(0,"Testing ls \n\n\n");
+    cont_ls();
+    printf(0,"Testing ps \n\n\n");
+    ps();
+    exit();
+  }
+  ////////FILE ISOLATION ENDS//////
 
+  /////////////COPY ON WRITE TESTING //////
+  create_file("ROOT");
+  int fdt;
+  fdt =open_file("ROOT",2);
+  char raw[5] = "root\n";
+  int n =5;
+  write(fdt,raw,n);
+  close(fdt);
 
-	// fork();
-	// join_container(1); // called only by child created by preceeding fork call .
-	// fork();
-	// join_container(1); // called only by child created by preceeding fork call .
-	//  Testing of resource isolation 
-	// fork();
-	// join_container(2); // called only by child created by preceeding fork call .
-	// fork ();
-	// join_container (3); // called only by child created by preceeding fork call .
-	/* - - - - - - - - - - PROCESS ISOLATION - - - - - - - - - - - - - - - - - - */
-	// called by atmost one process in every container .
-	// ps() ;
-	// while(1);
+  int pid = fork();
+  if(pid == 0){
+    join_container_wrapper(2); // called only by child created by preceeding fork call .
+    int fd;
+    cont_cat("ROOT");//This will read from the root file 
+    fd =open_file("ROOT",2);
+    char raw[9] = "anshroot\n";
+    int n =9;
+    write(fd,raw,n);
+    close(fd);
+    printf(0,"Testing ls \n\n");
+    cont_ls();
+    cont_cat("ROOT");
+    exit();
+  }
+	/////////////COPY ON WRITE TESTING //////
 	wait();
   exit();
 }

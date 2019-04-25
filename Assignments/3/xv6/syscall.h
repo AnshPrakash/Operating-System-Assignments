@@ -26,5 +26,6 @@
 #define SYS_leave_container 25
 #define SYS_ps 26
 #define SYS_newls 27
+#define SYS_getcid 28
 
 
